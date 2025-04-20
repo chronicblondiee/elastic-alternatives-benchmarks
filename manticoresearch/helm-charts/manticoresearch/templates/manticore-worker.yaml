@@ -1,0 +1,189 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "manticoresearch.fullname" . }}-worker
+  labels:
+    name: {{ include "manticoresearch.fullname" . }}-worker
+    app.kubernetes.io/component: worker
+    {{- include "manticoresearch.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.worker.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+      {{- include "manticoresearch.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "manticoresearch.fullname" . }}-worker-replication-svc
+  template:
+    metadata:
+      annotations:
+        {{- if or .Values.exporter.enabled .Values.serviceMonitor.enabled }}
+        {{- toYaml .Values.exporter.annotations | nindent 8 }}
+        {{- end }}
+        {{- if or .Values.exporter.enabled .Values.podAnnotations }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+        checksum/config: {{ .Values.worker.config.content | sha256sum }}
+      labels:
+        name: "{{ include "manticoresearch.fullname" . }}-worker"
+        app.kubernetes.io/component: worker
+        {{- include "manticoresearch.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "manticoresearch.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.worker.priorityClassName }}
+      priorityClassName: {{ .Values.worker.priorityClassName }}
+      {{- end }}
+      containers:
+      - name: worker
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: {{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
+        lifecycle:
+          preStop:
+            exec:
+              command: [ "/bin/sh", "-c", "./shutdown.sh" ]
+        env:
+          {{- if semverCompare ">=1.20-0" $.Capabilities.KubeVersion.GitVersion }}
+          - name: POD_START_VIA_PROBE
+            value: "true"
+          {{- end }}
+          - name: AUTO_ADD_TABLES_IN_CLUSTER
+            value: {{ .Values.worker.autoAddTablesInCluster | quote }}
+          - name: IS_BALANCER_ENABLED
+            value: {{ .Values.balancer.enabled | quote }}
+          - name: CONFIGMAP_PATH
+            value: {{ .Values.worker.config.path }}
+          - name: MANTICORE_PORT
+            value: {{ .Values.worker.service.ql.port | quote }}
+          - name: MANTICORE_BINARY_PORT
+            value: {{ .Values.worker.service.binary.port | quote }}
+          - name: CLUSTER_NAME
+            value: {{ .Values.worker.clusterName }}
+          - name: REPLICATION_MODE
+            value: {{ .Values.worker.replicationMode }}
+          - name: LOG_LEVEL
+            value: {{ .Values.worker.logLevel }}
+          - name: INSTANCE_LABEL
+            value: {{ .Release.Name }}
+          - name: WORKER_SERVICE
+            value: {{ include "manticoresearch.fullname" . }}-worker-replication-svc
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          {{- if .Values.worker.quorumRecovery }}
+          - name: QUORUM_RECOVERY
+            value: "true"
+          - name: QUORUM_RUN_INTERVAL
+            value: {{ .Values.worker.quorumCheckInterval | quote }}
+          {{- end }}
+        readinessProbe:
+          {{- if .Values.worker.readinessProbe.enabled }}
+          {{- include "manticore-helm.render" (dict "value" (omit .Values.worker.readinessProbe "enabled") "context" $) | nindent 8 }}
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - |
+                if /usr/bin/mysql -e "show status;" | grep cluster_node_state | grep -q synced ; then exit 0; else exit 1; fi
+          {{- end }}
+        livenessProbe:
+          {{- if .Values.worker.livenessProbe.enabled }}
+          {{- include "manticore-helm.render" (dict "value" (omit .Values.worker.livenessProbe "enabled") "context" $) | nindent 8 }}
+          tcpSocket:
+            port: {{ .Values.worker.service.ql.port }}
+          {{- end }}
+        {{- if semverCompare ">=1.20-0" $.Capabilities.KubeVersion.GitVersion }}
+        startupProbe:
+          {{- if .Values.worker.startupProbe.enabled }}
+          {{- include "manticore-helm.render" (dict "value" (omit .Values.worker.startupProbe "enabled") "context" $) | nindent 8 }}
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - |
+                if /usr/bin/mysql -e "show status;" | grep cluster_node_state | grep -q synced ; then exit 0; else exit 1; fi
+          {{- end }}
+        {{- end }}
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/manticore/
+          - name: config-volume
+            mountPath: {{ .Values.worker.config.path }}
+            subPath: manticore.conf
+        resources:
+          {{- toYaml .Values.worker.resources | nindent 10 }}
+      {{- if or .Values.exporter.enabled .Values.serviceMonitor.enabled }}
+      - name: exporter
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
+        env:
+          - name: MANTICORE_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: MANTICORE_PORT
+            value: "{{ .Values.worker.service.ql.targetPort }}"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ index .Values.exporter.annotations "prometheus.io/port" }}
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        resources:
+          {{- toYaml .Values.exporter.resources | nindent 10 }}
+      {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "manticoresearch.fullname" . }}-worker-config
+      {{- with .Values.worker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.worker.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.worker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if and .Values.worker.persistence.enabled (not .Values.persistence.existingClaim) }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app: {{ template "manticoresearch.name" . }}
+          release: {{ .Release.Name }}
+          heritage: {{ .Release.Service }}
+          app.kubernetes.io/component: worker
+      spec:
+        accessModes:
+        {{- range .Values.worker.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.worker.persistence.size | quote }}
+        {{ include "manticoresearch.worker.storageClass" . }}
+        selector:
+        {{- if .Values.worker.persistence.matchLabels }}
+          matchLabels:
+{{ toYaml .Values.worker.persistence.matchLabels | indent 12 }}
+        {{- end -}}
+        {{- if .Values.worker.persistence.matchExpressions }}
+        matchExpressions:
+{{ toYaml .Values.worker.persistence.matchExpressions | indent 12 }}
+        {{- end -}}
+  {{- end }}

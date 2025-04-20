@@ -1,0 +1,136 @@
+{{- if .Values.balancer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "manticoresearch.fullname" . }}-balancer
+  labels:
+    name: {{ include "manticoresearch.fullname" . }}-balancer
+    app.kubernetes.io/component: balancer
+    {{- include "manticoresearch.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.balancer.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: balancer
+      {{- include "manticoresearch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- if or .Values.exporter.enabled .Values.serviceMonitor.enabled }}
+        {{- toYaml .Values.exporter.annotations | nindent 8 }}
+        {{- end }}
+        {{- if or .Values.exporter.enabled .Values.podAnnotations }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+        checksum/config: {{ .Values.balancer.config.content | sha256sum }}
+      labels:
+        name: {{ include "manticoresearch.fullname" . }}-balancer
+        app.kubernetes.io/component: balancer
+        {{- include "manticoresearch.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "manticoresearch.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.balancer.priorityClassName }}
+      priorityClassName: {{ .Values.balancer.priorityClassName }}
+      {{- end }}
+      containers:
+      - name: balancer
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.balancer.image.repository }}:{{ .Values.balancer.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.balancer.image.pullPolicy }}
+        env:
+          - name: OBSERVER_RUN_INTERVAL
+            value: {{ .Values.balancer.runInterval | quote }}
+          - name: CLUSTER_NAME
+            value: {{ .Values.worker.clusterName }}
+          - name: INSTANCE_LABEL
+            value: {{ .Release.Name }}
+          {{- if .Values.optimize.enabled }}
+          - name: OPTIMIZE_RUN_INTERVAL
+            value: {{ .Values.optimize.interval | quote }}
+          - name: CHUNKS_COEFFICIENT
+            value: {{ .Values.optimize.coefficient | quote }}
+          {{- end }}
+          - name: CONFIGMAP_PATH
+            value: {{ .Values.balancer.config.path | quote }}
+          - name: TABLE_HA_STRATEGY
+            value: {{ .Values.balancer.config.table_ha_strategy | quote }}
+          - name: BALANCER_PORT
+            value: {{ .Values.balancer.service.ql.port | quote }}
+          - name: WORKER_PORT
+            value: {{ .Values.worker.service.ql.port | quote }}
+          - name: WORKER_SERVICE
+            value: {{ include "manticoresearch.fullname" . }}-worker-replication-svc
+        readinessProbe:
+          {{- if .Values.balancer.readinessProbe.enabled }}
+          {{- include "manticore-helm.render" (dict "value" (omit .Values.balancer.readinessProbe "enabled") "context" $) | nindent 8 }}
+          tcpSocket:
+            port: {{ .Values.balancer.service.ql.port }}
+          {{- end }}
+        livenessProbe:
+          {{- if .Values.balancer.livenessProbe.enabled }}
+          {{- include "manticore-helm.render" (dict "value" (omit .Values.balancer.livenessProbe "enabled") "context" $) | nindent 8 }}
+          tcpSocket:
+            port: {{ .Values.balancer.service.ql.port }}
+          {{- end }}
+        {{- if semverCompare ">=1.20-0" $.Capabilities.KubeVersion.GitVersion }}
+        startupProbe:
+          {{- if .Values.balancer.startupProbe.enabled }}
+          {{- include "manticore-helm.render" (dict "value" (omit .Values.balancer.startupProbe "enabled") "context" $) | nindent 8 }}
+          tcpSocket:
+            port: {{ .Values.balancer.service.ql.port }}
+          {{- end }}
+        {{- end }}
+        volumeMounts:
+          - name: config-volume
+            mountPath: {{ .Values.balancer.config.path }}
+            subPath: manticore.conf
+        resources:
+          {{- toYaml .Values.balancer.resources | nindent 10 }}
+      {{- if or .Values.exporter.enabled .Values.serviceMonitor.enabled }}
+      - name: exporter
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
+        env:
+          - name: MANTICORE_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: MANTICORE_PORT
+            value: "{{ .Values.balancer.service.ql.targetPort }}"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ index .Values.exporter.annotations "prometheus.io/port" }}
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        resources:
+          {{- toYaml .Values.exporter.resources | nindent 10 }}
+      {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "manticoresearch.fullname" . }}-balancer-config
+      {{- with .Values.balancer.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.balancer.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.balancer.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
