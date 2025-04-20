@@ -1,0 +1,89 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  annotations:
+    eck.k8s.elastic.co/license: basic
+    eck.k8s.elastic.co/orchestration-hints: '{"no_transient_settings":true,"service_accounts":true}'
+    elasticsearch.k8s.elastic.co/cluster-uuid: zLdXlNpBR12BBpM8izxXnw
+    meta.helm.sh/release-name: elastic-stack
+    meta.helm.sh/release-namespace: elastic-stack
+  creationTimestamp: "2025-04-20T21:21:40Z"
+  generation: 2
+  labels:
+    app.kubernetes.io/instance: elastic-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: eck-elasticsearch
+    helm.sh/chart: eck-elasticsearch-0.15.0
+  name: elasticsearch
+  namespace: elastic-stack
+  resourceVersion: "26892"
+  uid: 1ed53d1f-2b8e-42c9-adfd-9fc218431103
+spec:
+  auth: {}
+  http:
+    service:
+      metadata: {}
+      spec: {}
+    tls:
+      certificate: {}
+  monitoring:
+    logs: {}
+    metrics: {}
+  nodeSets:
+  - config:
+      node.store.allow_mmap: false
+    count: 1
+    name: default
+    podTemplate:
+      metadata:
+        creationTimestamp: null
+      spec:
+        containers:
+        - name: elasticsearch
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+  remoteClusterServer: {}
+  transport:
+    service:
+      metadata: {}
+      spec: {}
+    tls:
+      certificate: {}
+      certificateAuthorities: {}
+  updateStrategy:
+    changeBudget: {}
+  version: 9.0.0
+status:
+  availableNodes: 1
+  conditions:
+  - lastTransitionTime: "2025-04-20T21:22:49Z"
+    status: "True"
+    type: ReconciliationComplete
+  - lastTransitionTime: "2025-04-20T21:21:44Z"
+    message: All nodes are running version 9.0.0
+    status: "True"
+    type: RunningDesiredVersion
+  - lastTransitionTime: "2025-04-20T21:22:49Z"
+    message: Service elastic-stack/elasticsearch-es-internal-http has endpoints
+    status: "True"
+    type: ElasticsearchIsReachable
+  - lastTransitionTime: "2025-04-20T21:21:44Z"
+    message: 'Cannot get compute and storage resources from Elasticsearch resource
+      generation 2: cannot compute resources for NodeSet "default": no CPU request
+      or limit set'
+    status: "False"
+    type: ResourcesAwareManagement
+  health: green
+  inProgressOperations:
+    downscale:
+      lastUpdatedTime: "2025-04-20T21:21:44Z"
+    upgrade:
+      lastUpdatedTime: "2025-04-20T21:21:44Z"
+    upscale:
+      lastUpdatedTime: "2025-04-20T21:21:44Z"
+  observedGeneration: 2
+  phase: Ready
+  version: 9.0.0
