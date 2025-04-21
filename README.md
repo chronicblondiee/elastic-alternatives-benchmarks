@@ -9,6 +9,7 @@ The primary goal is to evaluate Elasticsearch alternatives based on the followin
 -   **Kubernetes Deployment:** Each alternative must be deployable on a standard Kubernetes cluster. Installation guides using Helm or Operators are preferred.
 -   **ARM Compatibility:** The alternative must have official or community support for running on ARM64 architecture.
 -   **Core Search Capabilities:** The alternative should offer core functionalities similar to Elasticsearch, such as full-text search, indexing, and querying capabilities.
+-   **Benchmarking:** Provide tools and scripts to measure indexing and search performance.
 
 ## Included Alternatives
 
@@ -28,18 +29,24 @@ This repository currently includes guides and resources for the following Elasti
 
 ## Repository Structure
 
-Each Elasticsearch alternative has its own dedicated directory within this repository. Inside each directory, you will find:
-
--   `README.md`: A detailed step-by-step guide for installing the alternative on Kubernetes.
--   `values.yaml` (or similar): Example configuration files for Helm charts or Kubernetes manifests.
--   *(Potentially)* Benchmarking scripts or configurations specific to that alternative.
+-   **Root Directory:** Contains this main README file.
+-   **Alternative Directories (e.g., `./opensearch/`, `./zincsearch/`):** Each directory dedicated to an Elasticsearch alternative typically includes:
+    -   `README.md`: A detailed step-by-step guide for installing the alternative on Kubernetes.
+    -   `values.yaml` (or similar): Example configuration files for Helm charts or Kubernetes manifests.
+-   **`./benchmarks/`:** Contains tools and scripts for performance benchmarking.
+    -   `elasticsearch-benchmark-tool/`: A specific tool for benchmarking Elasticsearch instances. Includes Python scripts for ingestion/search tests and a script to generate NDJSON test data. See [`./benchmarks/elasticsearch-benchmark-tool/README.md`](./benchmarks/elasticsearch-benchmark-tool/README.md) for details.
+    -   `utils/`: May contain shared utilities or other benchmarking scripts (like the general `benchmark.py` for multiple database types).
 
 ## How to Use
 
-1.  Navigate to the directory of the Elasticsearch alternative you are interested in (e.g., `cd manticoresearch`).
-2.  Follow the instructions in the `README.md` file within that directory to install the alternative on your Kubernetes cluster.
-3.  (Optional) Use any provided benchmarking tools or scripts to evaluate performance.
+1.  **Installation:**
+    *   Navigate to the directory of the Elasticsearch alternative you are interested in (e.g., `cd opensearch`).
+    *   Follow the instructions in the `README.md` file within that directory to install the alternative on your Kubernetes cluster.
+2.  **Benchmarking:**
+    *   Navigate to the relevant benchmark tool directory (e.g., `cd benchmarks/elasticsearch-benchmark-tool`).
+    *   Follow the instructions in the `README.md` within that benchmark directory to set up and run the performance tests against your deployed instance.
+    *   You may need to generate test data first using provided scripts (e.g., `scripts/generate_log_data.sh`).
 
 ## Contributing
 
-Contributions are welcome! If you want to add another Elasticsearch alternative, improve an existing guide, or add benchmarking tools, please feel free to open an issue or submit a pull request. Ensure any additions meet the core requirements (Kubernetes deployable, ARM compatible).
+Contributions are welcome! If you want to add another Elasticsearch alternative, improve an existing guide, enhance the benchmarking tools, or add results, please feel free to open an issue or submit a pull request. Ensure any additions meet the core requirements (Kubernetes deployable, ARM compatible).
