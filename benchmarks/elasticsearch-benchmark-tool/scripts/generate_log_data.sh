@@ -17,6 +17,7 @@ usage() {
 
 # Function to generate a random IP address (simple version)
 generate_ip() {
+  # Use arithmetic expansion directly in printf later if preferred
   echo "$((RANDOM % 256)).$((RANDOM % 256)).$((RANDOM % 256)).$((RANDOM % 256))"
 }
 
@@ -88,36 +89,36 @@ done
 
 # --- Main Logic ---
 
-echo "Generating $NUM_LINES NDJSON log lines into $OUTPUT_FILE..."
+echo "Generating $NUM_LINES NDJSON log lines into $OUTPUT_FILE..." >&2 # Also send initial message to stderr
 
-# Clear the output file or create it if it doesn't exist
-> "$OUTPUT_FILE"
+# *** Performance Improvement: Redirect the entire loop's output once ***
+{
+  # Loop to generate log lines
+  for (( i=1; i<=NUM_LINES; i++ )); do
+    # Generate data fields
+    timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ") # ISO 8601 UTC format
+    level=$(generate_level)
+    ip=$(generate_ip)
+    message=$(generate_message)
+    user_id=$(generate_user_id)
 
-# Loop to generate log lines
-for (( i=1; i<=NUM_LINES; i++ )); do
-  # Generate data fields
-  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ") # ISO 8601 UTC format
-  level=$(generate_level)
-  ip=$(generate_ip)
-  message=$(generate_message)
-  user_id=$(generate_user_id)
+    # Construct the JSON line using printf for better control over quoting
+    # Output directly to stdout (which is redirected to the file)
+    printf '{"timestamp": "%s", "level": "%s", "message": "%s", "user_id": "%s", "source_ip": "%s"}\n' \
+      "$timestamp" \
+      "$level" \
+      "$message" \
+      "$user_id" \
+      "$ip"
 
-  # Construct the JSON line using printf for better control over quoting
-  printf '{"timestamp": "%s", "level": "%s", "message": "%s", "user_id": "%s", "source_ip": "%s"}\n' \
-    "$timestamp" \
-    "$level" \
-    "$message" \
-    "$user_id" \
-    "$ip" \
-    >> "$OUTPUT_FILE"
+    # Optional: Print progress to stderr every 1000 lines so it doesn't go into the output file
+    if (( i % 1000 == 0 )); then
+       echo "Generated $i lines..." >&2
+    fi
 
-  # Optional: Print progress every 1000 lines
-  if (( i % 1000 == 0 )); then
-     echo "Generated $i lines..."
-  fi
+  done
+} > "$OUTPUT_FILE" # Redirect stdout of the block to the output file
 
-done
-
-echo "Finished generating $NUM_LINES NDJSON log lines in $OUTPUT_FILE."
+echo "Finished generating $NUM_LINES NDJSON log lines in $OUTPUT_FILE." >&2 # Send final message to stderr
 
 exit 0
