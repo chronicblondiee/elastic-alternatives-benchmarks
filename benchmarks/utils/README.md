@@ -53,8 +53,8 @@ This script acts as a wrapper to execute the Python-based Elasticsearch benchmar
 
 ### Purpose
 
--   Reads connection details (`ES_HOST`, `ES_PORT`, `ELASTIC_USER`, `ELASTIC_PASSWORD`, `ES_API_KEY`) and benchmark parameters (`ES_INDEX_NAME`, `ES_DATA_FILE`, `ES_QUERIES_FILE`, `ES_BATCH_SIZE`) from environment variables.
--   Allows overriding these settings via command-line arguments.
+-   Reads connection details (`ES_HOST`, `ES_PORT`, `ELASTIC_USER`, `ELASTIC_PASSWORD`, `ES_API_KEY`, `ES_SCHEME`, `ES_VERIFY_CERTS`) and benchmark parameters (`ES_INDEX_NAME`, `ES_DATA_FILE`, `ES_QUERIES_FILE`, `ES_BATCH_SIZE`) from environment variables.
+-   Allows overriding these settings via command-line arguments (e.g., `--scheme`, `--no-verify-certs`).
 -   Constructs and executes the `python -m src.cli` command with the appropriate arguments.
 -   Requires the Python virtual environment for the benchmark tool to be activated.
 
@@ -83,11 +83,14 @@ This script acts as a wrapper to execute the Python-based Elasticsearch benchmar
         export ES_DATA_FILE="../elasticsearch-benchmark-tool/scripts/generated_logs.ndjson"
         # export ES_QUERIES_FILE="../elasticsearch-benchmark-tool/scripts/queries.txt"
         # export ES_BATCH_SIZE=500
+        # Note: For ECK with default certs, you'll likely need --scheme https --no-verify-certs
         ```
     *   **Or set manually:**
         ```bash
         export ES_HOST="manual-host.example.com"
         export ES_PORT="9200"
+        export ES_SCHEME="https" # Set scheme if not http
+        export ES_VERIFY_CERTS="false" # Set if using self-signed certs
         export ELASTIC_USER="myuser"
         export ELASTIC_PASSWORD="mypassword"
         export ES_INDEX_NAME="manual_index"
@@ -97,17 +100,58 @@ This script acts as a wrapper to execute the Python-based Elasticsearch benchmar
         # export ES_BATCH_SIZE=1000
         ```
 4.  **Run the Benchmark Script:**
-    *   **Using environment variables/defaults:**
+    *   **Using environment variables/defaults (Example for ECK with HTTPS/Self-Signed Certs):**
         ```bash
-        ./run-elasticsearch-benchmark.sh
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs
         ```
     *   **Overriding some parameters via command line:**
         ```bash
-        ./run-elasticsearch-benchmark.sh -h localhost -p 9201 -i test_index -b 2000 -q ../elasticsearch-benchmark-tool/scripts/queries.txt
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -h localhost -p 9201 -i test_index -b 2000 -q ../elasticsearch-benchmark-tool/scripts/queries.txt
         ```
     *   **Specifying credentials via arguments (if env vars not set and Python script modified):**
         ```bash
-        ./run-elasticsearch-benchmark.sh -h localhost -U someuser -P somepass -d ../elasticsearch-benchmark-tool/scripts/generated_logs.ndjson
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -h localhost -U someuser -P somepass -d ../elasticsearch-benchmark-tool/scripts/generated_logs.ndjson
         ```
 
 This script provides a flexible way to configure and repeat your benchmark runs.
+
+### Debugging with `curl`
+
+If you encounter connection or ingestion errors (especially related to headers or authentication) when using the Python script, you can test the Elasticsearch bulk endpoint directly using `curl`. This bypasses the Python library and helps isolate server-side or network issues.
+
+1.  **Create Test Data:** Create a file named `bulk_test.ndjson` in the `utils` directory with the following content. **Ensure there is a newline character at the very end of the file.**
+    ```ndjson
+    {"index": {"_index": "my_benchmark_run"}}
+    {"message": "Test document 1", "@timestamp": "2025-04-21T22:30:00Z"}
+    {"index": {"_index": "my_benchmark_run"}}
+    {"message": "Test document 2", "@timestamp": "2025-04-21T22:30:01Z"}
+
+    ```
+    *(Note the blank line at the end)*
+
+2.  **Run `curl` Command:** Execute the following command, replacing `YOUR_PASSWORD`, `YOUR_HOST`, and `YOUR_PORT` with the actual values (or use the environment variables if set via `setup-elasticsearch-env-vars.sh`).
+    ```bash
+    # Replace placeholders or use environment variables
+    ES_HOST_VAL=${ES_HOST:-YOUR_HOST}
+    ES_PORT_VAL=${ES_PORT:-YOUR_PORT}
+    ELASTIC_PASSWORD_VAL=${ELASTIC_PASSWORD:-YOUR_PASSWORD}
+
+    curl -k -u "elastic:${ELASTIC_PASSWORD_VAL}" \
+         -X POST "https://${ES_HOST_VAL}:${ES_PORT_VAL}/_bulk" \
+         -H "Content-Type: application/x-ndjson" \
+         --data-binary "@bulk_test.ndjson"
+    ```
+    *   `-k`: Allows insecure connections (like `--no-verify-certs`).
+    *   `-u "elastic:..."`: Provides basic authentication.
+    *   `-X POST`: Specifies the HTTP method.
+    *   `-H "Content-Type: application/x-ndjson"`: Sets the required header.
+    *   `--data-binary "@bulk_test.ndjson"`: Sends the file content.
+
+3.  **Interpret Results:**
+    *   **Success:** A JSON response with `"errors":false` indicates the server accepted the request, headers, and data format. The issue likely lies within the Python script or its libraries.
+    *   **Failure:**
+        *   `400 Bad Request` with `media_type_header_exception`: Suggests something (like a proxy) might still be interfering with the `Content-Type` header even for `curl`.
+        *   `400 Bad Request` with `illegal_argument_exception` (e.g., missing newline): Indicates the data in `bulk_test.ndjson` is malformed.
+        *   `401 Unauthorized`: Authentication failed (check username/password).
+        *   `405 Method Not Allowed`: Incorrect URL path used.
+        *   Connection errors: Network issues or incorrect host/port.

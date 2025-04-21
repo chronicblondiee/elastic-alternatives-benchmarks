@@ -1,0 +1,4 @@
+{"index": {"_index": "my_benchmark_run"}}
+{"message": "Test document 1", "@timestamp": "2025-04-21T22:30:00Z"}
+{"index": {"_index": "my_benchmark_run"}}
+{"message": "Test document 2", "@timestamp": "2025-04-21T22:30:01Z"}
