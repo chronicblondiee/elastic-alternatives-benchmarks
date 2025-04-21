@@ -55,13 +55,16 @@ This script acts as a wrapper to execute the Python-based Elasticsearch benchmar
 
 -   Reads connection details (`ES_HOST`, `ES_PORT`, `ELASTIC_USER`, `ELASTIC_PASSWORD`, `ES_API_KEY`, `ES_SCHEME`, `ES_VERIFY_CERTS`) and benchmark parameters (`ES_INDEX_NAME`, `ES_DATA_FILE`, `ES_QUERIES_FILE`, `ES_BATCH_SIZE`) from environment variables.
 -   Allows overriding these settings via command-line arguments (e.g., `--scheme`, `--no-verify-certs`).
+-   Supports different modes:
+    -   **Default:** Runs data ingestion, followed by query benchmarking (if a queries file is provided).
+    -   **Query Only (`--query-only`):** Skips ingestion and runs only the query benchmark (requires a queries file).
 -   Constructs and executes the `python -m src.cli` command with the appropriate arguments.
 -   Requires the Python virtual environment for the benchmark tool to be activated.
 
 ### Prerequisites
 
 -   The Python virtual environment for the `elasticsearch-benchmark-tool` must be set up (see `../elasticsearch-benchmark-tool/README.md`).
--   The `elasticsearch-benchmark-tool/src/cli.py` script should ideally be modified to accept `--user`, `--password`, and `--api-key` arguments if authentication is needed.
+-   The `elasticsearch-benchmark-tool/src/cli.py` script must support the arguments passed by this wrapper (including `--query-only`, `--user`, `--password`, `--api-key`, etc.).
 
 ### How to Use
 
@@ -81,7 +84,7 @@ This script acts as a wrapper to execute the Python-based Elasticsearch benchmar
         # Optionally set other benchmark parameters
         export ES_INDEX_NAME="my_benchmark_run"
         export ES_DATA_FILE="../elasticsearch-benchmark-tool/scripts/generated_logs.ndjson"
-        # export ES_QUERIES_FILE="../elasticsearch-benchmark-tool/scripts/queries.txt"
+        export ES_QUERIES_FILE="../elasticsearch-benchmark-tool/scripts/generated_queries.txt"
         # export ES_BATCH_SIZE=500
         # Note: For ECK with default certs, you'll likely need --scheme https --no-verify-certs
         ```
@@ -95,22 +98,33 @@ This script acts as a wrapper to execute the Python-based Elasticsearch benchmar
         export ELASTIC_PASSWORD="mypassword"
         export ES_INDEX_NAME="manual_index"
         export ES_DATA_FILE="/absolute/path/to/data.ndjson"
+        export ES_QUERIES_FILE="/path/to/queries.txt"
         # export ES_API_KEY="myapikey"
-        # export ES_QUERIES_FILE="/path/to/queries.txt"
         # export ES_BATCH_SIZE=1000
         ```
 4.  **Run the Benchmark Script:**
-    *   **Using environment variables/defaults (Example for ECK with HTTPS/Self-Signed Certs):**
+    *   **Default Mode (Ingestion + Queries, Example for ECK with HTTPS/Self-Signed Certs):**
         ```bash
+        # Assumes ES_DATA_FILE and ES_QUERIES_FILE are set in environment
         ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs
         ```
-    *   **Overriding some parameters via command line:**
+    *   **Default Mode (Ingestion Only):**
         ```bash
-        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -h localhost -p 9201 -i test_index -b 2000 -q ../elasticsearch-benchmark-tool/scripts/queries.txt
+        # Unset or don't provide ES_QUERIES_FILE or -q argument
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -d ../elasticsearch-benchmark-tool/scripts/generated_logs.ndjson
         ```
-    *   **Specifying credentials via arguments (if env vars not set and Python script modified):**
+    *   **Query Only Mode:**
         ```bash
-        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -h localhost -U someuser -P somepass -d ../elasticsearch-benchmark-tool/scripts/generated_logs.ndjson
+        # Requires -q or ES_QUERIES_FILE to be set
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs --query-only -q ../elasticsearch-benchmark-tool/scripts/generated_queries.txt
+        ```
+    *   **Overriding some parameters via command line (Default Mode):**
+        ```bash
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -h localhost -p 9201 -i test_index -b 2000 -d ../data/small.ndjson -q ../queries/basic.txt
+        ```
+    *   **Specifying credentials via arguments (Query Only Mode):**
+        ```bash
+        ./run-elasticsearch-benchmark.sh --scheme https --no-verify-certs -h localhost -U someuser -P somepass --query-only -q ../queries/complex.txt
         ```
 
 This script provides a flexible way to configure and repeat your benchmark runs.
