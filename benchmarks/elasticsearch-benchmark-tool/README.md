@@ -1,4 +1,3 @@
-```markdown
 # Elasticsearch Benchmark Tool
 
 This tool provides a command-line interface to benchmark the indexing and search performance of an Elasticsearch instance. It allows you to ingest log data from a file and optionally run search queries against the indexed data, measuring the time taken for each operation.
@@ -13,9 +12,8 @@ This tool provides a command-line interface to benchmark the indexing and search
 
 ## Prerequisites
 
--   **Python:** Version 3.8 or higher.
+-   **Python:** Version 3.8 or higher (including `python3-venv` package or equivalent).
 -   **Elasticsearch Instance:** An accessible Elasticsearch cluster (local or remote).
--   **Elasticsearch Python Client:** The `elasticsearch` library must be installed (`pip install elasticsearch`).
 -   **Log Data File:** A file containing log data in **NDJSON format** (one valid JSON object per line).
 -   **(Optional) Query File:** A text file containing search queries, one per line.
 
@@ -26,13 +24,24 @@ This tool provides a command-line interface to benchmark the indexing and search
     ```bash
     cd /path/to/elasticsearch-benchmark-tool
     ```
-3.  **Install Dependencies:** Install the necessary Python library using pip:
+3.  **Create Virtual Environment:** Create an isolated Python environment for the tool's dependencies. This is recommended to avoid conflicts with other Python projects.
     ```bash
-    pip install elasticsearch
+    python3 -m venv .venv
     ```
-    *(Note: The `scripts/requirements.txt` file in the repository might list additional libraries like `pandas` or `numpy`. These are not strictly required by the core benchmarking scripts provided (`cli.py`, `benchmark.py`, `es_client.py`) and can be ignored unless you modify the code to use them.)*
+4.  **Activate Virtual Environment:** Activate the environment in your current shell session. Your prompt should change to indicate the active environment (e.g., `(.venv) your-prompt$`).
+    ```bash
+    source .venv/bin/activate
+    # On Windows use: .\.venv\Scripts\activate
+    ```
+5.  **Install Dependencies:** Install the necessary Python libraries into the active virtual environment using the provided requirements file.
+    ```bash
+    pip install -r src/requirements.txt
+    ```
+    *(Note: The `src/requirements.txt` file might list additional libraries like `pandas` or `numpy`. Only `elasticsearch` and `argparse` (standard library) are strictly required by the core scripts provided. You can adjust `src/requirements.txt` if needed.)*
 
 ## Usage
+
+**Important:** Ensure the virtual environment is activated (`source .venv/bin/activate`) before running the tool.
 
 Execute the benchmark tool from its main directory using the Python module execution flag (`-m`).
 
@@ -80,6 +89,8 @@ To use authentication:
     ```
 
 ### Examples
+
+*(Ensure virtual environment is active before running)*
 
 1.  **Basic Ingestion:** Ingest data into the default `logs` index on `localhost:9200`.
     ```bash
@@ -159,17 +170,18 @@ The tool prints progress and results to the console:
 
 ## Sample Data Generation
 
-A utility script `scripts/generate_log_data.sh` is included.
+A utility script `scripts/generate_log_data.sh` is included to generate sample NDJSON data.
 
--   **Purpose:** Generates sample log lines in a basic *text* format.
--   **Limitation:** The output of this script is **NOT** in the required NDJSON format. You must convert its output or use a different method to generate valid NDJSON for the `--data-file` argument.
--   **Usage:**
+-   **Purpose:** Generates sample log lines in NDJSON format suitable for the `--data-file` argument.
+-   **Usage:** See `scripts/README.md` for details.
     ```bash
-    # Generate 10000 sample log lines (text format - requires conversion!)
-    bash ./scripts/generate_log_data.sh -n 10000 -o ./scripts/generated_text_logs.log
+    # Example: Generate 10000 lines into scripts/generated_logs.ndjson
+    bash ./scripts/generate_log_data.sh -n 10000 -o ./scripts/generated_logs.ndjson
     ```
--   **Conversion (Example Concept):** You might use tools like `jq` combined with modifications to the generation script to produce NDJSON. For example, if the script were modified to output valid JSON on each line:
-    ```bash
-    # Conceptual conversion assuming generate_log_data.sh outputs valid JSON per line
-    # bash ./scripts/generate_log_data.sh -n 5000 | jq -c '.' > ./scripts/generated_logs.ndjson
-    ```
+
+## Deactivating the Environment
+
+When you are finished using the tool, you can deactivate the virtual environment:
+```bash
+deactivate
+```
