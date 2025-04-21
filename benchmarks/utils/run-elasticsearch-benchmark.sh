@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# --- Configuration (Defaults & Environment Variable Checks) ---
+
+# Get the directory where this script is located
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Assume the script is in benchmarks/utils, navigate to the benchmark tool directory
+BENCHMARK_TOOL_DIR="${SCRIPT_DIR}/../elasticsearch-benchmark-tool"
+
+# Elasticsearch Connection
+ES_HOST="${ES_HOST:-localhost}" # Default to localhost if ES_HOST is not set
+ES_PORT="${ES_PORT:-9200}"      # Default to 9200 if ES_PORT is not set
+# ELASTIC_USER and ELASTIC_PASSWORD should be set by sourcing extract-elastic-secrets.sh or manually
+ES_USER="${ELASTIC_USER:-}"     # Default to empty if ELASTIC_USER is not set
+ES_PASSWORD="${ELASTIC_PASSWORD:-}" # Default to empty if ELASTIC_PASSWORD is not set
+ES_API_KEY="${ES_API_KEY:-}"    # Default to empty if ES_API_KEY is not set
+
+# Benchmark Parameters
+ES_INDEX_NAME="${ES_INDEX_NAME:-benchmark_logs}" # Default index name
+# Default data file relative to the benchmark tool directory
+DEFAULT_DATA_FILE="${BENCHMARK_TOOL_DIR}/scripts/generated_logs.ndjson"
+ES_DATA_FILE="${ES_DATA_FILE:-$DEFAULT_DATA_FILE}"
+ES_QUERIES_FILE="${ES_QUERIES_FILE:-}" # Default to empty (no query benchmark)
+ES_BATCH_SIZE="${ES_BATCH_SIZE:-1000}" # Default batch size
+
+# --- Functions ---
+usage() {
+  echo "Usage: $0 [-h <host>] [-p <port>] [-i <index>] [-d <data_file>] [-q <queries_file>] [-b <batch_size>] [-U <user>] [-P <password>] [-K <api_key>]"
+  echo ""
+  echo "  Runs the Python Elasticsearch benchmark tool using environment variables and optional overrides."
+  echo "  Ensure the Python virtual environment for the tool is activated before running."
+  echo "  Set environment variables (e.g., ES_HOST, ES_PORT, ELASTIC_USER, ELASTIC_PASSWORD) for configuration."
+  echo ""
+  echo "  Options (override environment variables):"
+  echo "    -h <host>:         Elasticsearch host (default: \$ES_HOST or '$ES_HOST')"
+  echo "    -p <port>:         Elasticsearch port (default: \$ES_PORT or '$ES_PORT')"
+  echo "    -i <index>:        Index name (default: \$ES_INDEX_NAME or '$ES_INDEX_NAME')"
+  echo "    -d <data_file>:    Path to NDJSON data file (default: \$ES_DATA_FILE or '$ES_DATA_FILE')"
+  echo "    -q <queries_file>: Path to queries file (optional, default: \$ES_QUERIES_FILE or none)"
+  echo "    -b <batch_size>:   Ingestion batch size (default: \$ES_BATCH_SIZE or '$ES_BATCH_SIZE')"
+  echo "    -U <user>:         Elasticsearch user (default: \$ELASTIC_USER or none)"
+  echo "    -P <password>:     Elasticsearch password (default: \$ELASTIC_PASSWORD or none)"
+  echo "    -K <api_key>:      Elasticsearch API key (default: \$ES_API_KEY or none)"
+  echo "    --help:            Display this help message"
+  exit 1
+}
+
+# --- Argument Parsing ---
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    -h) ES_HOST="$2"; shift; shift ;;
+    -p) ES_PORT="$2"; shift; shift ;;
+    -i) ES_INDEX_NAME="$2"; shift; shift ;;
+    -d) ES_DATA_FILE="$2"; shift; shift ;;
+    -q) ES_QUERIES_FILE="$2"; shift; shift ;;
+    -b) ES_BATCH_SIZE="$2"; shift; shift ;;
+    -U) ES_USER="$2"; shift; shift ;;
+    -P) ES_PASSWORD="$2"; shift; shift ;;
+    -K) ES_API_KEY="$2"; shift; shift ;;
+    --help) usage ;;
+    *) echo "Unknown option: $1"; usage ;;
+  esac
+done
+
+# --- Validation ---
+if [[ -z "$ES_HOST" ]]; then
+  echo "Error: Elasticsearch host is required. Set ES_HOST environment variable or use -h option." >&2
+  exit 1
+fi
+if [[ ! -f "$ES_DATA_FILE" ]]; then
+  echo "Error: Data file not found at '$ES_DATA_FILE'. Set ES_DATA_FILE or use -d option." >&2
+  exit 1
+fi
+if [[ -n "$ES_QUERIES_FILE" && ! -f "$ES_QUERIES_FILE" ]]; then
+  echo "Error: Queries file specified but not found at '$ES_QUERIES_FILE'." >&2
+  exit 1
+fi
+if ! command -v python &> /dev/null; then
+    echo "Error: 'python' command not found. Is the virtual environment activated?" >&2
+    exit 1
+fi
+# Check if the benchmark tool's cli.py exists
+if [[ ! -f "${BENCHMARK_TOOL_DIR}/src/cli.py" ]]; then
+    echo "Error: Benchmark script not found at ${BENCHMARK_TOOL_DIR}/src/cli.py" >&2
+    exit 1
+fi
+
+
+# --- Construct Python Command ---
+PYTHON_CMD="python -m src.cli"
+PYTHON_CMD+=" --host \"$ES_HOST\""
+PYTHON_CMD+=" --port \"$ES_PORT\""
+PYTHON_CMD+=" --index-name \"$ES_INDEX_NAME\""
+PYTHON_CMD+=" --data-file \"$ES_DATA_FILE\""
+PYTHON_CMD+=" --batch-size \"$ES_BATCH_SIZE\""
+
+# Add optional arguments
+if [[ -n "$ES_QUERIES_FILE" ]]; then
+  PYTHON_CMD+=" --queries-file \"$ES_QUERIES_FILE\""
+fi
+
+# --- Authentication Handling ---
+# NOTE: This assumes the elasticsearch-benchmark-tool/src/cli.py has been modified
+# to accept --user, --password, and --api-key arguments as described in its README.
+AUTH_ARGS=""
+if [[ -n "$ES_API_KEY" ]]; then
+    AUTH_ARGS+=" --api-key \"$ES_API_KEY\""
+    echo "Using API Key authentication." >&2
+elif [[ -n "$ES_USER" && -n "$ES_PASSWORD" ]]; then
+    AUTH_ARGS+=" --user \"$ES_USER\""
+    # Be careful about exposing password directly in process list; consider alternatives if high security needed
+    AUTH_ARGS+=" --password \"$ES_PASSWORD\""
+    echo "Using User/Password authentication for user '$ES_USER'." >&2
+elif [[ -n "$ES_USER" || -n "$ES_PASSWORD" ]]; then
+    echo "Warning: Both user and password must be provided for basic authentication. Ignoring." >&2
+fi
+
+PYTHON_CMD+="$AUTH_ARGS"
+
+# --- Execute Benchmark ---
+echo "--- Running Elasticsearch Benchmark ---"
+echo "Host: $ES_HOST:$ES_PORT"
+echo "Index: $ES_INDEX_NAME"
+echo "Data File: $ES_DATA_FILE"
+[[ -n "$ES_QUERIES_FILE" ]] && echo "Queries File: $ES_QUERIES_FILE"
+echo "Batch Size: $ES_BATCH_SIZE"
+echo "Executing command:"
+echo "$PYTHON_CMD"
+echo "---------------------------------------"
+
+# Execute from the benchmark tool's directory
+(cd "$BENCHMARK_TOOL_DIR" && eval "$PYTHON_CMD")
+
+EXIT_CODE=$?
+echo "---------------------------------------"
+if [[ $EXIT_CODE -eq 0 ]]; then
+  echo "Benchmark finished successfully."
+else
+  echo "Benchmark finished with errors (Exit Code: $EXIT_CODE)."
+fi
+
+exit $EXIT_CODE
