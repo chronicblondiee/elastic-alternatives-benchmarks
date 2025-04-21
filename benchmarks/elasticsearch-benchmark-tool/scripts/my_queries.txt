@@ -1,0 +1,20 @@
+level:"INFO" AND message:timeout
+level:"TRACE" AND message:started
+level:"DEBUG" AND message:input
+user_id:"usr-800"
+level:"DEBUG" AND message:data
+level:"TRACE" AND message:data
+user_id:"usr-49"
+level:"TRACE"
+message:timeout
+user_id:"usr-823"
+source_ip:10.0.*
+level:"DEBUG"
+user_id:"usr-861"
+level:"ERROR" AND message:input
+message:input
+source_ip:172.16.*
+message:failed
+message:connection
+user_id:"usr-213"
+message:logged
