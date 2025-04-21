@@ -2,15 +2,16 @@
 
 # Default values
 DEFAULT_LINES=1000
-OUTPUT_FILE="generated_logs.log"
+OUTPUT_FILE="generated_logs.ndjson" # Changed default extension
 
 # --- Functions ---
 
 # Function to print usage instructions
 usage() {
   echo "Usage: $0 [-n <number_of_lines>] [-o <output_file>]"
-  echo "  -n <number_of_lines>: Number of log lines to generate (default: $DEFAULT_LINES)"
-  echo "  -o <output_file>:     Name of the output log file (default: $OUTPUT_FILE)"
+  echo "  Generates log data in NDJSON format."
+  echo "  -n <number_of_lines>: Number of log lines (JSON objects) to generate (default: $DEFAULT_LINES)"
+  echo "  -o <output_file>:     Name of the output NDJSON file (default: $OUTPUT_FILE)"
   exit 1
 }
 
@@ -26,6 +27,7 @@ generate_level() {
 }
 
 # Function to generate a random short message
+# Escape double quotes within the message for valid JSON
 generate_message() {
   local messages=(
     "User logged in successfully"
@@ -40,8 +42,16 @@ generate_message() {
     "System health check OK"
     "Timeout occurred"
     "Memory usage high"
+    "Attempting to read file \"config.json\"" # Example with quotes
   )
-  echo "${messages[$((RANDOM % ${#messages[@]}))]}"
+  local msg="${messages[$((RANDOM % ${#messages[@]}))]}"
+  # Basic escaping of double quotes for JSON
+  echo "${msg//\"/\\\"}"
+}
+
+# Function to generate a random user ID
+generate_user_id() {
+    echo "usr-$((RANDOM % 1000 + 1))" # Generates usr-1 to usr-1000
 }
 
 # --- Argument Parsing ---
@@ -78,24 +88,28 @@ done
 
 # --- Main Logic ---
 
-echo "Generating $NUM_LINES log lines into $OUTPUT_FILE..."
+echo "Generating $NUM_LINES NDJSON log lines into $OUTPUT_FILE..."
 
 # Clear the output file or create it if it doesn't exist
 > "$OUTPUT_FILE"
 
 # Loop to generate log lines
 for (( i=1; i<=NUM_LINES; i++ )); do
-  timestamp=$(date +"%Y-%m-%d %H:%M:%S.%3N")
+  # Generate data fields
+  timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ") # ISO 8601 UTC format
   level=$(generate_level)
   ip=$(generate_ip)
   message=$(generate_message)
-  request_id=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 12) # Random request ID
+  user_id=$(generate_user_id)
 
-  # Construct the log line
-  log_line="$timestamp [$level] client=$ip request_id=$request_id : $message"
-
-  # Append to the output file
-  echo "$log_line" >> "$OUTPUT_FILE"
+  # Construct the JSON line using printf for better control over quoting
+  printf '{"timestamp": "%s", "level": "%s", "message": "%s", "user_id": "%s", "source_ip": "%s"}\n' \
+    "$timestamp" \
+    "$level" \
+    "$message" \
+    "$user_id" \
+    "$ip" \
+    >> "$OUTPUT_FILE"
 
   # Optional: Print progress every 1000 lines
   if (( i % 1000 == 0 )); then
@@ -104,6 +118,6 @@ for (( i=1; i<=NUM_LINES; i++ )); do
 
 done
 
-echo "Finished generating $NUM_LINES log lines in $OUTPUT_FILE."
+echo "Finished generating $NUM_LINES NDJSON log lines in $OUTPUT_FILE."
 
 exit 0
