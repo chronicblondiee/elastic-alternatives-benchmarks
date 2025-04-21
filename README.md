@@ -14,12 +14,17 @@ The primary goal is to evaluate Elasticsearch alternatives based on the followin
 
 This repository currently includes guides and resources for the following Elasticsearch alternatives:
 
+-   [ECK (Elastic Stack)](./eck/README.md)
+-   [Grafana Loki](./grafana-loki/README.md)
 -   [ManticoreSearch](./manticoresearch/README.md)
+-   [Meilisearch](./meilisearch/README.md)
 -   [OpenObserve](./openobserve/README.md)
+-   [OpenSearch](./opensearch/README.md)
+-   [Quickwit](./quickwit/README.md)
 -   [Solr](./solr/README.md)
+-   [Sonic](./sonic/README.md)
 -   [Typesense](./typesense/README.md)
 -   [ZincSearch](./zincsearch/README.md)
--   *(Add more as they are included)*
 
 ## Repository Structure
 
