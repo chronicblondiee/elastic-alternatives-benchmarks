@@ -1,0 +1,6 @@
+requirements.txt
+elasticsearch
+argparse
+requests
+pandas
+numpy
