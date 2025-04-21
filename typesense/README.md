@@ -1,102 +1,106 @@
 ## Install Guide
 - [Typesense Installation Documentation](https://typesense.org/docs/guide/install-typesense.html)
 - [Typesense Kubernetes Operator (Community)](https://github.com/sai3010/Typesense-Kubernetes-Operator)
-- [Typesense Helm Chart (Community)](https://github.com/typesense/helm-chart)
 
 ### Prerequisites
 - A Kubernetes cluster (v1.20 or later recommended).
 - `kubectl` installed and configured to interact with your cluster.
-- Helm installed (v3 or later).
+- **Typesense Kubernetes Operator installed** in your cluster.
 
-### Steps to Install Typesense on Kubernetes using Helm
+### Steps to Install Typesense on Kubernetes using the Operator
 
-1.  **Add the Typesense Helm Repository**
-    Add the official Typesense Helm chart repository:
+1.  **Install the Typesense Kubernetes Operator**
+    Follow the instructions from the [Typesense Kubernetes Operator repository](https://github.com/sai3010/Typesense-Kubernetes-Operator) to install the operator itself. This typically involves applying YAML manifests:
     ```bash
-    helm repo add typesense https://typesense.github.io/helm-chart/
-    helm repo update
+    # Example command - refer to the operator's documentation for the correct manifests https://sai3010.github.io/Typesense-Kubernetes-Operator/deployment/
+    kubectl apply -f https://raw.githubusercontent.com/sai3010/Typesense-Kubernetes-Operator/refs/heads/main/operator-config.yaml
+    ```
+    Verify the operator pod is running:
+    ```bash
+    kubectl get pods -n typesense-operator # Or the namespace where the operator was installed
     ```
 
-2.  **Install Typesense Using Helm**
-    Deploy Typesense to your Kubernetes cluster using the Helm chart.
-
-    *   **Default Installation (Single Node):**
-        ```bash
-        # Note: Requires a Typesense API Key. Generate one securely.
-        helm install typesense typesense/typesense \
-          --set apiKey=<YOUR_TYPESENSE_API_KEY> \
-          --set existingSecret=typesense-api-key # Optional: Use if you created a secret manually
-        ```
-        *Replace `<YOUR_TYPESENSE_API_KEY>` with your actual key.*
-
-    *   **Installation with Custom Values:**
-        Create a `values.yaml` file to override default settings (e.g., for High Availability, persistence). See step 5 for an example.
-        ```bash
-        # Ensure apiKey is set in your values.yaml or via --set
-        helm install typesense typesense/typesense -f values.yaml
-        ```
-
-3.  **Verify the Installation**
-    Check the status of the deployed pods:
+2.  **Create a Typesense API Key Secret**
+    Securely generate a strong API key for Typesense. Create a Kubernetes secret to store it:
     ```bash
-    kubectl get pods
+    # Replace YOUR_SECURE_API_KEY with your generated key
+    kubectl create secret generic typesense-api-key --from-literal=key=YOUR_SECURE_API_KEY -n default # Or your target namespace
     ```
-    Look for pods related to the `typesense` release. They should be in the `Running` state.
 
-4.  **Access Typesense**
-    To interact with the Typesense API (default port 8108), expose the service. Use port-forwarding for quick access:
-    ```bash
-    kubectl port-forward svc/typesense 8108:8108
-    ```
-    You can now access the Typesense API at `http://localhost:8108`. Use your API key for authentication.
-    ```bash
-    curl -H "X-TYPESENSE-API-KEY: <YOUR_TYPESENSE_API_KEY>" http://localhost:8108/health
-    ```
-    For production, use a LoadBalancer or Ingress controller.
+3.  **Define and Deploy a Typesense Cluster**
+    Create a YAML manifest file (e.g., `typesense-cluster.yaml`) using the `Typesense` Custom Resource Definition (CRD) provided by the operator.
 
-5.  **Custom Configuration (Optional)**
-    Create a `values.yaml` file to customize your deployment. Example for enabling High Availability (HA) and persistence:
+    **Example `typesense-cluster.yaml` (Single Node with Persistence):**
     ```yaml
-    # filepath: values.yaml
-    # Example custom values for Typesense Helm chart
+    # filepath: typesense-cluster.yaml
+    apiVersion: typesense.com/v1alpha1
+    kind: Typesense
+    metadata:
+      name: my-typesense-cluster # Name of your Typesense instance
+      namespace: default # Namespace where you want to deploy Typesense
+    spec:
+      # Reference the secret containing the API key
+      apiKeySecretName: typesense-api-key
 
-    # --- IMPORTANT: Set your API Key securely ---
-    apiKey: "<YOUR_TYPESENSE_API_KEY>"
-    # Or manage via existingSecret:
-    # existingSecret: typesense-api-key
+      # Number of nodes (1 for single node, >=3 for HA)
+      nodes: 1
 
-    # --- High Availability Settings ---
-    replicaCount: 3 # Minimum 3 for HA
+      # Image settings (optional, defaults usually work)
+      # image: typesense/typesense:0.25.2
 
-    # --- Persistence Settings ---
-    persistence:
-      enabled: true
-      size: 10Gi
-      # storageClassName: "your-storage-class" # Optional: Specify if needed
+      # Persistence settings
+      persistence:
+        enabled: true
+        accessMode: ReadWriteOnce
+        storageClassName: "standard" # Adjust if needed
+        size: 10Gi # Adjust size as needed
 
-    # --- Resource Limits ---
-    resources:
-      requests:
-        memory: "1Gi"
-        cpu: "500m"
-      limits:
-        memory: "2Gi"
-        cpu: "1"
+      # Resource settings (optional)
+      # resources:
+      #   requests:
+      #     memory: "1Gi"
+      #     cpu: "500m"
+      #   limits:
+      #     memory: "2Gi"
+      #     cpu: "1"
 
-    # Refer to the chart's default values.yaml for more options:
-    # https://github.com/typesense/helm-chart/blob/main/charts/typesense/values.yaml
+      # Refer to the Operator's documentation for all available spec options
     ```
-    Install or upgrade using this file:
+    Apply the manifest to create the Typesense cluster:
     ```bash
-    # Install
-    helm install typesense typesense/typesense -f values.yaml
-
-    # Upgrade an existing release
-    helm upgrade typesense typesense/typesense -f values.yaml
+    kubectl apply -f typesense-cluster.yaml
     ```
+
+4.  **Verify the Installation**
+    Check the status of the deployed Typesense pods managed by the operator:
+    ```bash
+    kubectl get pods -n default -l app.kubernetes.io/instance=my-typesense-cluster # Adjust namespace and name if needed
+    ```
+    Look for the pod(s) related to `my-typesense-cluster`. They should be in the `Running` state. Also check the status of the CRD:
+    ```bash
+    kubectl get typesense my-typesense-cluster -n default -o yaml
+    ```
+
+5.  **Access Typesense**
+    The operator typically creates a Service for your Typesense cluster. Find the service name:
+    ```bash
+    kubectl get svc -n default -l app.kubernetes.io/instance=my-typesense-cluster
+    ```
+    Assuming the service is named `my-typesense-cluster`, use port-forwarding for quick access (default port 8108):
+    ```bash
+    kubectl port-forward svc/my-typesense-cluster 8108:8108 -n default
+    ```
+    You can now access the Typesense API at `http://localhost:8108`. Use your API key (from the secret) for authentication.
+    ```bash
+    # Replace YOUR_SECURE_API_KEY with the key from the secret
+    curl -H "X-TYPESENSE-API-KEY: YOUR_SECURE_API_KEY" http://localhost:8108/health
+    ```
+    For production, use a LoadBalancer or Ingress controller pointing to the service.
+
+6.  **Custom Configuration (Optional)**
+    Modify the `typesense-cluster.yaml` manifest to customize your deployment. You can adjust `spec.nodes` for High Availability (requires >= 3), change persistence settings, define resources, specify node selectors, etc. Refer to the [Typesense Kubernetes Operator documentation](https://github.com/sai3010/Typesense-Kubernetes-Operator) for all available fields within the `spec`. Apply changes using `kubectl apply -f typesense-cluster.yaml`.
 
 ### References
 - [Typesense Installation Guide](https://typesense.org/docs/guide/install-typesense.html)
-- [Typesense Helm Chart Repository](https://github.com/typesense/helm-chart)
-- [Typesense Helm Chart `values.yaml`](https://github.com/typesense/helm-chart/blob/main/charts/typesense/values.yaml)
 - [Typesense Kubernetes Operator (Community)](https://github.com/sai3010/Typesense-Kubernetes-Operator)
+- [Typesense Operator CRD Definition (Check Operator Repo)](https://github.com/sai3010/Typesense-Kubernetes-Operator/blob/main/deploy/crds/typesense.com_typesenses_crd.yaml)

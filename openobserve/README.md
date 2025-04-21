@@ -11,7 +11,9 @@
 1.  **Add the OpenObserve Helm Repository**
     Add the official OpenObserve Helm chart repository to your Helm configuration:
     ```bash
-    helm repo add openobserve https://openobserve.github.io/helm-charts
+    # https://github.com/openobserve/openobserve-helm-chart/blob/main/charts/openobserve/README.md
+    kubectl apply -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.22/releases/cnpg-1.22.1.yaml
+    helm repo add openobserve https://charts.openobserve.ai
     helm repo update
     ```
 

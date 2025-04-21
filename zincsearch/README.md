@@ -1,6 +1,5 @@
 ## Install Guide
 - [ZincSearch Documentation](https://zincsearch-docs.zinc.dev/)
-- [ZincSearch Helm Chart](https://github.com/zinclabs/helm-charts)
 
 ### Prerequisites
 - A Kubernetes cluster (v1.20 or later recommended).
@@ -12,8 +11,7 @@
 1.  **Add the ZincSearch Helm Repository**
     Add the official ZincSearch Helm chart repository:
     ```bash
-    helm repo add zincsearch https://zinclabs.github.io/helm-charts/
-    helm repo update
+    clone https://github.com/zincsearch/zincsearch.git
     ```
 
 2.  **Install ZincSearch Using Helm**
@@ -21,7 +19,7 @@
 
     *   **Default Installation:**
         ```bash
-        helm install zincsearch zincsearch/zincsearch
+        helm install zincsearch helm/zincsearch
         ```
         *Note: The default installation might use ephemeral storage. For production, enable persistence (see step 5).*
 
@@ -95,5 +93,4 @@
 
 ### References
 - [ZincSearch Documentation](https://zincsearch-docs.zinc.dev/)
-- [ZincSearch Helm Chart Repository](https://github.com/zinclabs/helm-charts)
-- [ZincSearch Helm Chart `values.yaml`](https://github.com/zinclabs/helm-charts/blob/main/charts/zincsearch/values.yaml)
+- [ZincSearch Helm Chart `values.yaml`](https://github.com/zincsearch/zincsearch/blob/main/helm/zincsearch/values.yaml)
