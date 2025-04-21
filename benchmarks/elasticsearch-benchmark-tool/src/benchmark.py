@@ -3,6 +3,7 @@
 import time
 import json
 import logging
+from datetime import datetime, timezone  # Import datetime and timezone
 from elasticsearch import Elasticsearch, helpers, exceptions
 
 # Configure logging
@@ -28,7 +29,7 @@ def read_ndjson(file_path):
 # --- Ingestion Benchmark Function ---
 def run_ingestion(client: Elasticsearch, index_name: str, data_file: str, batch_size: int = 1000):
     """
-    Runs the bulk ingestion benchmark.
+    Runs the bulk ingestion benchmark, adding a @timestamp field to each document.
 
     Args:
         client: An initialized Elasticsearch client instance.
@@ -77,6 +78,12 @@ def run_ingestion(client: Elasticsearch, index_name: str, data_file: str, batch_
 
     try:
         for doc in read_ndjson(data_file):
+            # --- FIX: Add @timestamp field ---
+            # Get current time in UTC and format as ISO 8601 string with 'Z' for UTC
+            now_utc = datetime.now(timezone.utc)
+            timestamp_str = now_utc.strftime('%Y-%m-%dT%H:%M:%S.%fZ')[:-3] + 'Z'  # Format with milliseconds and Z
+            doc['@timestamp'] = timestamp_str
+
             actions.append({"_index": index_name, "_source": doc})
             total_docs += 1
 
@@ -91,16 +98,16 @@ def run_ingestion(client: Elasticsearch, index_name: str, data_file: str, batch_
                         stats_only=False         # Get detailed results to see errors
                     )
                     num_success = success_count
-                    num_failed = len(failed_items) # helpers.bulk returns list of failed actions
+                    num_failed = len(failed_items)  # helpers.bulk returns list of failed actions
                     chunk_errors = []
                     if num_failed > 0:
                         # Extract reasons from failed items
                         for item_result in failed_items:
                             # Structure might be {'index': {'_index': '...', 'status': 400, 'error': {...}}}
-                            action_type = list(item_result.keys())[0] # e.g., 'index'
+                            action_type = list(item_result.keys())[0]  # e.g., 'index'
                             error_info = item_result.get(action_type, {}).get('error', {})
                             reason = error_info.get('reason', 'Unknown bulk error')
-                            chunk_errors.append(f"{action_type.upper()}: {reason}") # Add action type
+                            chunk_errors.append(f"{action_type.upper()}: {reason}")  # Add action type
 
                     successful_docs += num_success
                     errors += num_failed
@@ -113,14 +120,14 @@ def run_ingestion(client: Elasticsearch, index_name: str, data_file: str, batch_
                     logger.error(f"Bulk request transport error: {getattr(e, 'info', e)} - Status: {getattr(e, 'status_code', 'N/A')}")
                     # Add specific error info if available
                     error_info_str = str(getattr(e, 'info', e))
-                    errors += len(actions) # Assume all failed if transport error occurs
+                    errors += len(actions)  # Assume all failed if transport error occurs
                     error_details.append(f"TransportError ({getattr(e, 'status_code', 'N/A')}): {error_info_str}")
-                except Exception as e: # Catch other potential bulk errors
-                     logger.error(f"Unexpected error during bulk processing: {e}", exc_info=True) # Log traceback
-                     errors += len(actions)
-                     error_details.append(f"Unexpected Bulk Error: {e}")
+                except Exception as e:  # Catch other potential bulk errors
+                    logger.error(f"Unexpected error during bulk processing: {e}", exc_info=True)  # Log traceback
+                    errors += len(actions)
+                    error_details.append(f"Unexpected Bulk Error: {e}")
 
-                actions = [] # Clear actions after processing batch
+                actions = []  # Clear actions after processing batch
                 if errors == 0:
                     logger.info(f"Processed batch: {successful_docs} successful docs so far.")
                 else:
@@ -129,39 +136,39 @@ def run_ingestion(client: Elasticsearch, index_name: str, data_file: str, batch_
         # Ingest remaining actions
         if actions:
             try:
-                 success_count, failed_items = helpers.bulk(
-                     client,
-                     actions,
-                     chunk_size=len(actions), # Process remaining
-                     raise_on_error=False,
-                     raise_on_exception=True,
-                     stats_only=False
-                 )
-                 num_success = success_count
-                 num_failed = len(failed_items)
-                 chunk_errors = []
-                 if num_failed > 0:
-                     for item_result in failed_items:
-                         action_type = list(item_result.keys())[0]
-                         error_info = item_result.get(action_type, {}).get('error', {})
-                         reason = error_info.get('reason', 'Unknown bulk error')
-                         chunk_errors.append(f"{action_type.upper()}: {reason}")
+                success_count, failed_items = helpers.bulk(
+                    client,
+                    actions,
+                    chunk_size=len(actions),  # Process remaining
+                    raise_on_error=False,
+                    raise_on_exception=True,
+                    stats_only=False
+                )
+                num_success = success_count
+                num_failed = len(failed_items)
+                chunk_errors = []
+                if num_failed > 0:
+                    for item_result in failed_items:
+                        action_type = list(item_result.keys())[0]
+                        error_info = item_result.get(action_type, {}).get('error', {})
+                        reason = error_info.get('reason', 'Unknown bulk error')
+                        chunk_errors.append(f"{action_type.upper()}: {reason}")
 
-                 successful_docs += num_success
-                 errors += num_failed
-                 if chunk_errors:
-                    error_details.extend(chunk_errors)
-                    logger.warning(f"Final bulk chunk finished with {num_failed} errors. Examples: {chunk_errors[:3]}")
+                    successful_docs += num_success
+                    errors += num_failed
+                    if chunk_errors:
+                        error_details.extend(chunk_errors)
+                        logger.warning(f"Final bulk chunk finished with {num_failed} errors. Examples: {chunk_errors[:3]}")
 
             except exceptions.TransportError as e:
                 logger.error(f"Final bulk request transport error: {getattr(e, 'info', e)} - Status: {getattr(e, 'status_code', 'N/A')}")
                 error_info_str = str(getattr(e, 'info', e))
                 errors += len(actions)
                 error_details.append(f"TransportError ({getattr(e, 'status_code', 'N/A')}): {error_info_str}")
-            except Exception as e: # Catch other potential bulk errors
-                 logger.error(f"Unexpected error during final bulk processing: {e}", exc_info=True)
-                 errors += len(actions)
-                 error_details.append(f"Unexpected Bulk Error: {e}")
+            except Exception as e:  # Catch other potential bulk errors
+                logger.error(f"Unexpected error during final bulk processing: {e}", exc_info=True)
+                errors += len(actions)
+                error_details.append(f"Unexpected Bulk Error: {e}")
 
     except FileNotFoundError:
         return {"total_docs_attempted": 0, "successful_docs": 0, "total_time": 0, "docs_per_sec": 0, "errors": 1, "error_details": [f"Data file not found: {data_file}"]}
