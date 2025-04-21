@@ -38,47 +38,16 @@ spec:
           command: [ 'sh', '-c', 'sysctl -w vm.max_map_count=262144' ]
         containers:
         - name: elasticsearch
+          # Set JVM heap size via ES_JAVA_OPTS. Set to 50% of the memory limit (2Gi -> 1g).
+          env:
+          - name: ES_JAVA_OPTS
+            value: "-Xms1g -Xmx1g"
           resources:
             requests:
               memory: 2Gi
               cpu: 0.5
             limits:
               memory: 2Gi
-              cpu: 1
-  # - name: data
-  #   count: 3
-  #   config:
-  #     node.roles: [ "data", "ingest", "ml", "transform" ]
-  #     node.store.allow_mmap: false
-  #   volumeClaimTemplates:
-  #   - metadata:
-  #       name: elasticsearch-data
-  #     spec:
-  #       accessModes:
-  #       - ReadWriteOnce
-  #       resources:
-  #         requests:
-  #           storage: 20Gi
-  #       storageClassName: standard
-  #   podTemplate:
-  #     metadata:
-  #       labels:
-  #         key: eck-arm
-  #     spec:
-  #       initContainers:
-  #       - name: sysctl
-  #         securityContext:
-  #           privileged: true
-  #         command: [ 'sh', '-c', 'sysctl -w vm.max_map_count=262144' ]
-  #       containers:
-  #       - name: elasticsearch
-  #         resources:
-  #           requests:
-  #             memory: 2Gi
-  #             cpu: 0.5
-  #           limits:
-  #             memory: 2Gi
-  #             cpu: 1
 ---
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
