@@ -51,6 +51,22 @@ This repository currently includes guides and resources for the following Elasti
 
 Contributions are welcome! If you want to add another Elasticsearch alternative, improve an existing guide, enhance the benchmarking tools, or add results, please feel free to open an issue or submit a pull request. Ensure any additions meet the core requirements (Kubernetes deployable, ARM compatible).
 
-## Note
+## Benchmark Tools & Scripts
+
+-   [Elasticsearch Benchmark Tool](./benchmarks/elasticsearch-benchmark-tool/README.md)
+-   [Grafana Loki Benchmark Tool](./benchmarks/grafana-loki-benchmark-tool/README.md)
+-   [ManticoreSearch Benchmark Tool](./benchmarks/manticoresearch-benchmark-tool/README.md)
+-   [Meilisearch Benchmark Tool](./benchmarks/meilisearch-benchmark-tool/README.md)
+-   [OpenObserve Benchmark Tool](./benchmarks/openobserve-benchmark-tool/README.md)
+-   [OpenSearch Benchmark Tool](./benchmarks/opensearch-benchmark-tool/README.md)
+-   [Quickwit Benchmark Tool](./benchmarks/quickwit-benchmark-tool/README.md)
+-   [Solr Benchmark Tool](./benchmarks/solr-benchmark-tool/README.md)
+-   [Sonic Benchmark Tool](./benchmarks/sonic-benchmark-tool/README.md)
+-   [Typesense Benchmark Tool](./benchmarks/typesense-benchmark-tool/README.md)
+-   [ZincSearch Benchmark Tool](./benchmarks/zincsearch-benchmark-tool/README.md)
+-   [Benchmark Data Generation Scripts](./benchmarks/scripts/README.md)
+-   [Benchmark Utility Scripts](./benchmarks/utils/README.md)
+
+## Note on ARM
 
 I have not fully validated if all of the software listed work well on ARM I will update the repo with status as implemenation of each benchmark progresses.
