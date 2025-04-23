@@ -50,3 +50,7 @@ This repository currently includes guides and resources for the following Elasti
 ## Contributing
 
 Contributions are welcome! If you want to add another Elasticsearch alternative, improve an existing guide, enhance the benchmarking tools, or add results, please feel free to open an issue or submit a pull request. Ensure any additions meet the core requirements (Kubernetes deployable, ARM compatible).
+
+## Note
+
+I have not fully validated if all of the software listed work well on ARM I will update the repo with status as implemenation of each benchmark progresses.
