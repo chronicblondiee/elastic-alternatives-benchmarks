@@ -1,0 +1,1000 @@
+user_id:"usr-903"
+level:"WARN"
+message:input
+message:connection
+message:failed
+message:failed
+level:"WARN" AND message:data
+level:"INFO" AND message:timeout
+user_id:"usr-762"
+level:"DEBUG"
+level:"DEBUG"
+level:"DEBUG" AND message:processed
+source_ip:10.0.*
+message:logged
+source_ip:10.0.*
+user_id:"usr-773"
+user_id:"usr-187"
+source_ip:192.168.*
+level:"WARN"
+user_id:"usr-336"
+message:data
+source_ip:10.0.*
+user_id:"usr-878"
+level:"TRACE"
+level:"ERROR"
+source_ip:172.16.*
+source_ip:172.16.*
+level:"DEBUG"
+level:"INFO" AND message:processed
+source_ip:192.168.*
+source_ip:192.168.*
+source_ip:10.0.*
+source_ip:172.16.*
+message:file
+message:started
+source_ip:192.168.*
+source_ip:10.0.*
+user_id:"usr-552"
+message:data
+source_ip:192.168.*
+source_ip:192.168.*
+message:data
+level:"DEBUG"
+source_ip:192.168.*
+message:input
+level:"WARN" AND message:file
+level:"INFO"
+user_id:"usr-20"
+source_ip:192.168.*
+source_ip:172.16.*
+message:updated
+level:"TRACE"
+user_id:"usr-773"
+level:"TRACE" AND message:processed
+user_id:"usr-155"
+user_id:"usr-289"
+level:"ERROR" AND message:data
+level:"WARN"
+level:"TRACE" AND message:input
+source_ip:172.16.*
+level:"ERROR"
+source_ip:192.168.*
+level:"DEBUG" AND message:timeout
+level:"WARN"
+message:processed
+level:"DEBUG" AND message:updated
+source_ip:192.168.*
+source_ip:10.0.*
+user_id:"usr-712"
+level:"INFO" AND message:failed
+user_id:"usr-188"
+user_id:"usr-122"
+source_ip:172.16.*
+user_id:"usr-576"
+source_ip:10.0.*
+user_id:"usr-895"
+message:timeout
+user_id:"usr-312"
+level:"TRACE" AND message:timeout
+source_ip:192.168.*
+source_ip:192.168.*
+message:connection
+source_ip:10.0.*
+user_id:"usr-95"
+message:connection
+level:"TRACE"
+level:"DEBUG" AND message:input
+level:"INFO" AND message:connection
+level:"DEBUG" AND message:failed
+level:"ERROR" AND message:updated
+source_ip:10.0.*
+source_ip:192.168.*
+level:"DEBUG" AND message:failed
+level:"TRACE"
+message:started
+level:"TRACE"
+level:"INFO" AND message:file
+level:"WARN"
+source_ip:172.16.*
+source_ip:10.0.*
+source_ip:192.168.*
+user_id:"usr-89"
+source_ip:10.0.*
+source_ip:192.168.*
+message:started
+level:"DEBUG"
+message:input
+level:"ERROR" AND message:timeout
+user_id:"usr-126"
+level:"TRACE"
+level:"ERROR"
+level:"DEBUG" AND message:updated
+level:"TRACE"
+level:"TRACE" AND message:failed
+level:"TRACE" AND message:updated
+level:"TRACE"
+level:"DEBUG"
+user_id:"usr-859"
+level:"WARN" AND message:connection
+level:"ERROR" AND message:failed
+level:"INFO"
+message:file
+level:"ERROR" AND message:logged
+source_ip:172.16.*
+level:"TRACE"
+level:"TRACE"
+level:"WARN"
+message:started
+level:"DEBUG"
+message:updated
+user_id:"usr-340"
+user_id:"usr-173"
+source_ip:192.168.*
+level:"TRACE" AND message:failed
+message:processed
+source_ip:172.16.*
+user_id:"usr-996"
+source_ip:192.168.*
+level:"ERROR"
+level:"WARN"
+user_id:"usr-425"
+message:failed
+user_id:"usr-702"
+level:"ERROR" AND message:processed
+level:"WARN"
+source_ip:172.16.*
+source_ip:10.0.*
+source_ip:192.168.*
+level:"ERROR" AND message:updated
+message:updated
+source_ip:192.168.*
+message:failed
+source_ip:172.16.*
+source_ip:172.16.*
+level:"INFO"
+level:"INFO" AND message:input
+source_ip:10.0.*
+message:connection
+message:data
+level:"ERROR"
+message:logged
+level:"INFO" AND message:file
+level:"INFO"
+source_ip:192.168.*
+level:"WARN" AND message:file
+level:"TRACE"
+user_id:"usr-985"
+level:"ERROR" AND message:input
+level:"INFO"
+level:"WARN" AND message:processed
+user_id:"usr-797"
+message:connection
+level:"WARN" AND message:updated
+level:"TRACE"
+level:"ERROR"
+source_ip:10.0.*
+message:timeout
+level:"ERROR"
+message:updated
+level:"ERROR" AND message:data
+user_id:"usr-48"
+source_ip:10.0.*
+user_id:"usr-711"
+user_id:"usr-283"
+message:file
+user_id:"usr-452"
+source_ip:10.0.*
+level:"INFO" AND message:connection
+message:timeout
+level:"DEBUG" AND message:started
+message:timeout
+level:"TRACE" AND message:timeout
+source_ip:10.0.*
+level:"INFO"
+message:failed
+message:started
+message:timeout
+message:processed
+message:processed
+message:data
+source_ip:10.0.*
+source_ip:192.168.*
+level:"INFO"
+level:"WARN" AND message:logged
+source_ip:192.168.*
+message:updated
+level:"TRACE"
+message:connection
+user_id:"usr-909"
+user_id:"usr-347"
+level:"DEBUG" AND message:updated
+level:"DEBUG"
+source_ip:172.16.*
+level:"ERROR" AND message:file
+user_id:"usr-176"
+message:connection
+source_ip:172.16.*
+level:"DEBUG" AND message:timeout
+level:"WARN"
+level:"DEBUG" AND message:logged
+source_ip:10.0.*
+message:input
+user_id:"usr-569"
+level:"ERROR" AND message:logged
+level:"DEBUG" AND message:processed
+level:"INFO" AND message:started
+level:"TRACE"
+message:logged
+level:"INFO" AND message:updated
+level:"WARN"
+message:logged
+level:"TRACE"
+source_ip:172.16.*
+level:"TRACE"
+user_id:"usr-172"
+message:logged
+level:"WARN"
+user_id:"usr-52"
+level:"INFO"
+user_id:"usr-314"
+level:"TRACE" AND message:file
+level:"INFO" AND message:timeout
+message:updated
+level:"DEBUG"
+message:connection
+user_id:"usr-484"
+message:connection
+source_ip:172.16.*
+level:"ERROR" AND message:input
+user_id:"usr-711"
+level:"TRACE"
+user_id:"usr-841"
+level:"DEBUG"
+level:"INFO" AND message:file
+level:"DEBUG" AND message:updated
+user_id:"usr-377"
+message:connection
+level:"DEBUG"
+level:"INFO" AND message:connection
+message:file
+user_id:"usr-8"
+level:"TRACE"
+message:connection
+message:processed
+level:"TRACE"
+source_ip:10.0.*
+source_ip:10.0.*
+level:"DEBUG"
+user_id:"usr-169"
+level:"INFO"
+level:"ERROR"
+user_id:"usr-457"
+level:"ERROR" AND message:failed
+level:"WARN" AND message:file
+message:file
+level:"TRACE"
+level:"INFO"
+level:"INFO" AND message:failed
+level:"INFO" AND message:updated
+user_id:"usr-755"
+level:"ERROR"
+source_ip:10.0.*
+user_id:"usr-949"
+message:updated
+level:"INFO"
+user_id:"usr-366"
+level:"ERROR" AND message:failed
+message:file
+level:"DEBUG" AND message:input
+level:"ERROR" AND message:timeout
+message:updated
+user_id:"usr-600"
+user_id:"usr-336"
+user_id:"usr-938"
+message:logged
+level:"WARN" AND message:updated
+level:"INFO" AND message:updated
+message:processed
+message:updated
+message:processed
+level:"INFO" AND message:file
+level:"ERROR" AND message:timeout
+message:started
+message:data
+message:input
+user_id:"usr-522"
+level:"DEBUG" AND message:connection
+source_ip:192.168.*
+level:"WARN"
+message:timeout
+message:timeout
+source_ip:10.0.*
+message:updated
+source_ip:10.0.*
+level:"WARN"
+level:"TRACE" AND message:processed
+message:input
+level:"ERROR"
+level:"INFO"
+level:"ERROR"
+level:"INFO" AND message:timeout
+user_id:"usr-509"
+source_ip:10.0.*
+level:"INFO" AND message:timeout
+source_ip:172.16.*
+level:"DEBUG"
+source_ip:10.0.*
+source_ip:10.0.*
+source_ip:172.16.*
+level:"ERROR" AND message:started
+user_id:"usr-646"
+user_id:"usr-790"
+source_ip:10.0.*
+level:"DEBUG"
+message:processed
+user_id:"usr-844"
+level:"INFO"
+level:"DEBUG" AND message:started
+level:"ERROR"
+user_id:"usr-825"
+source_ip:10.0.*
+message:input
+source_ip:10.0.*
+level:"INFO" AND message:timeout
+level:"DEBUG"
+source_ip:192.168.*
+level:"DEBUG"
+user_id:"usr-401"
+level:"WARN"
+source_ip:192.168.*
+message:connection
+level:"INFO" AND message:input
+level:"INFO"
+source_ip:192.168.*
+user_id:"usr-307"
+level:"DEBUG"
+source_ip:10.0.*
+source_ip:192.168.*
+source_ip:172.16.*
+level:"INFO"
+message:timeout
+source_ip:172.16.*
+message:connection
+level:"ERROR"
+level:"ERROR" AND message:processed
+user_id:"usr-521"
+source_ip:172.16.*
+message:file
+level:"ERROR"
+level:"TRACE" AND message:data
+user_id:"usr-456"
+message:timeout
+user_id:"usr-502"
+message:processed
+source_ip:10.0.*
+message:started
+user_id:"usr-807"
+message:data
+level:"INFO"
+message:connection
+source_ip:10.0.*
+level:"TRACE"
+user_id:"usr-804"
+user_id:"usr-302"
+user_id:"usr-819"
+user_id:"usr-971"
+message:processed
+message:input
+user_id:"usr-479"
+source_ip:10.0.*
+message:timeout
+message:input
+source_ip:192.168.*
+source_ip:192.168.*
+source_ip:192.168.*
+level:"WARN" AND message:failed
+level:"INFO" AND message:processed
+user_id:"usr-776"
+level:"TRACE"
+level:"TRACE" AND message:failed
+message:connection
+user_id:"usr-255"
+level:"WARN" AND message:failed
+source_ip:172.16.*
+source_ip:10.0.*
+level:"TRACE" AND message:timeout
+user_id:"usr-13"
+message:failed
+message:connection
+level:"DEBUG"
+user_id:"usr-590"
+source_ip:192.168.*
+user_id:"usr-96"
+level:"WARN"
+user_id:"usr-388"
+user_id:"usr-838"
+level:"WARN"
+source_ip:10.0.*
+level:"TRACE" AND message:processed
+source_ip:192.168.*
+user_id:"usr-344"
+level:"ERROR"
+level:"WARN" AND message:file
+level:"TRACE" AND message:started
+user_id:"usr-452"
+level:"ERROR"
+source_ip:192.168.*
+level:"INFO"
+user_id:"usr-69"
+message:failed
+user_id:"usr-945"
+level:"ERROR" AND message:updated
+user_id:"usr-453"
+level:"INFO"
+source_ip:192.168.*
+message:timeout
+message:input
+level:"TRACE"
+user_id:"usr-83"
+level:"TRACE"
+source_ip:10.0.*
+level:"INFO" AND message:started
+level:"ERROR" AND message:data
+level:"WARN" AND message:updated
+level:"WARN" AND message:updated
+level:"INFO"
+source_ip:10.0.*
+user_id:"usr-325"
+user_id:"usr-539"
+message:processed
+source_ip:10.0.*
+level:"TRACE" AND message:processed
+level:"TRACE" AND message:timeout
+message:input
+user_id:"usr-380"
+level:"WARN"
+source_ip:172.16.*
+level:"DEBUG" AND message:processed
+level:"ERROR" AND message:connection
+message:logged
+user_id:"usr-488"
+message:input
+level:"TRACE"
+level:"WARN" AND message:logged
+source_ip:192.168.*
+source_ip:192.168.*
+user_id:"usr-280"
+source_ip:172.16.*
+user_id:"usr-993"
+level:"WARN"
+source_ip:192.168.*
+message:logged
+user_id:"usr-525"
+user_id:"usr-43"
+source_ip:192.168.*
+source_ip:172.16.*
+level:"WARN" AND message:data
+message:timeout
+source_ip:172.16.*
+message:timeout
+source_ip:10.0.*
+level:"DEBUG" AND message:updated
+user_id:"usr-467"
+level:"ERROR" AND message:started
+user_id:"usr-376"
+message:failed
+source_ip:10.0.*
+user_id:"usr-278"
+user_id:"usr-374"
+message:processed
+level:"TRACE" AND message:started
+message:logged
+user_id:"usr-301"
+level:"TRACE"
+message:file
+source_ip:10.0.*
+level:"ERROR" AND message:failed
+level:"WARN"
+level:"ERROR" AND message:connection
+message:started
+level:"TRACE"
+level:"TRACE" AND message:failed
+source_ip:192.168.*
+level:"TRACE" AND message:updated
+level:"WARN"
+level:"ERROR"
+level:"TRACE" AND message:connection
+level:"ERROR"
+message:input
+message:updated
+message:connection
+level:"INFO"
+message:started
+level:"DEBUG"
+message:input
+user_id:"usr-800"
+message:file
+source_ip:172.16.*
+source_ip:192.168.*
+source_ip:192.168.*
+message:failed
+level:"WARN"
+message:logged
+message:processed
+message:connection
+level:"DEBUG" AND message:timeout
+level:"INFO" AND message:timeout
+level:"WARN" AND message:logged
+message:processed
+user_id:"usr-396"
+level:"TRACE"
+level:"WARN"
+user_id:"usr-200"
+level:"DEBUG"
+message:data
+message:file
+message:failed
+level:"WARN"
+level:"WARN" AND message:failed
+source_ip:192.168.*
+message:data
+message:failed
+user_id:"usr-793"
+message:file
+message:timeout
+level:"INFO" AND message:updated
+message:started
+level:"INFO" AND message:data
+level:"ERROR" AND message:file
+message:processed
+level:"ERROR"
+message:connection
+message:connection
+user_id:"usr-607"
+source_ip:192.168.*
+source_ip:192.168.*
+level:"DEBUG" AND message:failed
+source_ip:172.16.*
+user_id:"usr-704"
+source_ip:192.168.*
+source_ip:10.0.*
+level:"ERROR" AND message:processed
+message:logged
+message:updated
+source_ip:10.0.*
+user_id:"usr-911"
+user_id:"usr-316"
+message:logged
+user_id:"usr-124"
+source_ip:192.168.*
+level:"ERROR"
+source_ip:10.0.*
+level:"TRACE" AND message:data
+level:"WARN" AND message:failed
+message:processed
+user_id:"usr-285"
+level:"INFO"
+level:"WARN" AND message:processed
+message:logged
+level:"WARN" AND message:failed
+level:"ERROR"
+message:processed
+user_id:"usr-752"
+source_ip:172.16.*
+source_ip:172.16.*
+message:processed
+level:"WARN"
+level:"ERROR"
+level:"TRACE"
+level:"DEBUG" AND message:processed
+source_ip:172.16.*
+level:"DEBUG"
+user_id:"usr-690"
+message:updated
+source_ip:10.0.*
+message:connection
+message:connection
+user_id:"usr-851"
+level:"ERROR" AND message:started
+level:"TRACE"
+level:"INFO" AND message:timeout
+user_id:"usr-391"
+level:"TRACE"
+message:logged
+message:file
+level:"INFO"
+source_ip:192.168.*
+level:"TRACE"
+level:"TRACE"
+level:"INFO"
+level:"TRACE"
+level:"INFO" AND message:timeout
+level:"DEBUG"
+level:"TRACE" AND message:failed
+message:input
+level:"ERROR" AND message:started
+message:logged
+message:data
+user_id:"usr-178"
+level:"DEBUG" AND message:input
+user_id:"usr-147"
+level:"ERROR" AND message:logged
+level:"DEBUG"
+user_id:"usr-628"
+level:"ERROR"
+message:timeout
+message:timeout
+user_id:"usr-580"
+level:"ERROR"
+level:"WARN" AND message:failed
+source_ip:172.16.*
+source_ip:192.168.*
+source_ip:192.168.*
+message:logged
+message:timeout
+level:"INFO"
+message:timeout
+message:file
+level:"WARN"
+message:logged
+level:"INFO"
+level:"INFO"
+message:processed
+source_ip:172.16.*
+level:"WARN" AND message:data
+level:"ERROR"
+level:"WARN"
+level:"INFO"
+source_ip:10.0.*
+source_ip:172.16.*
+level:"INFO" AND message:logged
+message:processed
+message:processed
+level:"TRACE" AND message:logged
+level:"INFO" AND message:input
+level:"TRACE"
+source_ip:172.16.*
+level:"DEBUG"
+user_id:"usr-558"
+source_ip:192.168.*
+source_ip:172.16.*
+message:processed
+level:"INFO"
+source_ip:10.0.*
+level:"DEBUG"
+user_id:"usr-494"
+level:"INFO"
+source_ip:10.0.*
+level:"ERROR"
+message:data
+level:"TRACE" AND message:connection
+level:"TRACE"
+level:"DEBUG"
+user_id:"usr-751"
+user_id:"usr-338"
+source_ip:10.0.*
+level:"DEBUG"
+source_ip:172.16.*
+level:"INFO" AND message:started
+source_ip:192.168.*
+level:"DEBUG" AND message:timeout
+user_id:"usr-306"
+user_id:"usr-959"
+level:"ERROR"
+source_ip:172.16.*
+message:file
+level:"TRACE"
+level:"TRACE" AND message:timeout
+level:"TRACE"
+message:input
+user_id:"usr-223"
+source_ip:192.168.*
+source_ip:192.168.*
+message:logged
+level:"INFO"
+level:"ERROR"
+message:logged
+user_id:"usr-273"
+source_ip:192.168.*
+level:"TRACE"
+source_ip:192.168.*
+source_ip:192.168.*
+user_id:"usr-133"
+user_id:"usr-754"
+source_ip:172.16.*
+message:input
+level:"ERROR"
+level:"ERROR"
+message:file
+level:"INFO"
+user_id:"usr-407"
+level:"WARN"
+message:failed
+message:started
+level:"WARN"
+user_id:"usr-555"
+user_id:"usr-433"
+message:logged
+level:"DEBUG" AND message:timeout
+level:"WARN" AND message:failed
+level:"INFO" AND message:updated
+source_ip:192.168.*
+level:"INFO"
+message:started
+level:"INFO"
+level:"DEBUG"
+level:"ERROR"
+source_ip:172.16.*
+level:"TRACE"
+user_id:"usr-895"
+level:"WARN"
+message:input
+level:"DEBUG"
+level:"DEBUG" AND message:started
+source_ip:10.0.*
+level:"TRACE" AND message:updated
+source_ip:192.168.*
+message:started
+message:started
+user_id:"usr-80"
+level:"ERROR"
+user_id:"usr-437"
+source_ip:192.168.*
+user_id:"usr-155"
+level:"ERROR" AND message:updated
+message:file
+source_ip:192.168.*
+user_id:"usr-226"
+level:"WARN"
+level:"ERROR" AND message:started
+level:"ERROR" AND message:timeout
+user_id:"usr-387"
+level:"TRACE"
+message:connection
+source_ip:192.168.*
+level:"WARN"
+message:timeout
+source_ip:192.168.*
+level:"INFO" AND message:started
+user_id:"usr-113"
+level:"TRACE"
+level:"ERROR"
+level:"WARN" AND message:logged
+source_ip:10.0.*
+level:"WARN"
+level:"WARN"
+user_id:"usr-979"
+user_id:"usr-825"
+user_id:"usr-669"
+level:"WARN"
+level:"DEBUG"
+source_ip:192.168.*
+message:failed
+source_ip:10.0.*
+level:"DEBUG"
+user_id:"usr-284"
+level:"INFO" AND message:updated
+level:"ERROR" AND message:timeout
+user_id:"usr-396"
+source_ip:192.168.*
+user_id:"usr-763"
+level:"WARN"
+message:data
+level:"ERROR" AND message:failed
+message:processed
+user_id:"usr-11"
+message:file
+user_id:"usr-865"
+source_ip:192.168.*
+message:input
+message:processed
+user_id:"usr-411"
+message:started
+source_ip:172.16.*
+level:"DEBUG"
+source_ip:172.16.*
+level:"WARN" AND message:processed
+level:"DEBUG" AND message:failed
+level:"WARN" AND message:logged
+level:"WARN" AND message:processed
+level:"ERROR" AND message:started
+source_ip:10.0.*
+source_ip:172.16.*
+level:"ERROR" AND message:failed
+level:"TRACE" AND message:data
+user_id:"usr-522"
+message:failed
+user_id:"usr-246"
+level:"TRACE"
+user_id:"usr-113"
+level:"TRACE"
+message:started
+level:"DEBUG" AND message:updated
+message:file
+user_id:"usr-12"
+level:"WARN"
+source_ip:10.0.*
+level:"TRACE"
+level:"ERROR" AND message:data
+message:logged
+user_id:"usr-884"
+level:"INFO" AND message:processed
+message:failed
+user_id:"usr-543"
+message:logged
+source_ip:10.0.*
+level:"TRACE"
+level:"INFO"
+level:"DEBUG"
+level:"TRACE"
+source_ip:192.168.*
+user_id:"usr-2"
+message:input
+message:processed
+level:"INFO"
+level:"INFO" AND message:data
+level:"DEBUG"
+level:"TRACE"
+level:"WARN" AND message:updated
+level:"DEBUG"
+message:input
+level:"DEBUG"
+level:"TRACE"
+level:"WARN" AND message:started
+level:"DEBUG"
+message:updated
+user_id:"usr-620"
+level:"WARN" AND message:failed
+user_id:"usr-774"
+message:timeout
+message:started
+level:"DEBUG" AND message:updated
+level:"TRACE" AND message:timeout
+level:"INFO" AND message:connection
+level:"INFO" AND message:input
+source_ip:192.168.*
+level:"INFO" AND message:file
+source_ip:192.168.*
+level:"DEBUG"
+message:data
+level:"WARN" AND message:logged
+user_id:"usr-3"
+level:"DEBUG"
+level:"ERROR"
+level:"WARN" AND message:timeout
+user_id:"usr-318"
+level:"DEBUG"
+message:timeout
+source_ip:172.16.*
+message:failed
+user_id:"usr-397"
+level:"INFO"
+level:"ERROR"
+source_ip:10.0.*
+source_ip:10.0.*
+level:"INFO"
+message:processed
+level:"ERROR"
+source_ip:10.0.*
+source_ip:10.0.*
+message:data
+level:"DEBUG" AND message:failed
+level:"TRACE"
+level:"DEBUG" AND message:failed
+level:"DEBUG" AND message:logged
+message:updated
+message:input
+user_id:"usr-600"
+level:"ERROR" AND message:failed
+level:"TRACE" AND message:logged
+level:"INFO"
+level:"TRACE" AND message:input
+level:"TRACE" AND message:processed
+message:timeout
+source_ip:172.16.*
+user_id:"usr-421"
+message:started
+user_id:"usr-403"
+user_id:"usr-633"
+user_id:"usr-452"
+level:"INFO"
+level:"TRACE" AND message:processed
+message:processed
+level:"WARN" AND message:input
+message:failed
+message:file
+level:"TRACE"
+source_ip:10.0.*
+user_id:"usr-338"
+source_ip:192.168.*
+user_id:"usr-590"
+message:data
+message:started
+level:"WARN"
+level:"WARN"
+user_id:"usr-525"
+source_ip:10.0.*
+level:"DEBUG"
+message:data
+level:"DEBUG"
+level:"WARN" AND message:connection
+user_id:"usr-160"
+message:updated
+level:"INFO"
+level:"DEBUG"
+message:timeout
+level:"TRACE" AND message:timeout
+level:"WARN" AND message:file
+user_id:"usr-669"
+user_id:"usr-925"
+source_ip:172.16.*
+message:updated
+level:"DEBUG"
+message:input
+message:processed
+level:"ERROR" AND message:failed
+level:"INFO"
+level:"DEBUG"
+message:processed
+source_ip:172.16.*
+level:"ERROR" AND message:updated
+level:"INFO"
+level:"WARN"
+message:updated
+message:timeout
+source_ip:172.16.*
+user_id:"usr-773"
+level:"WARN"
+level:"WARN" AND message:logged
+user_id:"usr-602"
+message:logged
+level:"ERROR" AND message:updated
+message:failed
+user_id:"usr-583"
+source_ip:172.16.*
+user_id:"usr-808"
+level:"INFO"
+user_id:"usr-603"
+source_ip:172.16.*
+level:"ERROR" AND message:processed
+level:"TRACE" AND message:connection
+level:"WARN" AND message:logged
+source_ip:192.168.*
+level:"WARN" AND message:timeout
+level:"WARN" AND message:logged
+level:"TRACE" AND message:updated
+level:"WARN" AND message:timeout
+user_id:"usr-204"
+level:"DEBUG" AND message:logged
+level:"TRACE" AND message:started
+level:"ERROR" AND message:timeout
+source_ip:10.0.*
+level:"INFO" AND message:connection
+level:"TRACE" AND message:processed
+level:"TRACE" AND message:connection
+message:processed
+source_ip:10.0.*
+level:"DEBUG"
+user_id:"usr-803"
+level:"DEBUG" AND message:input
+level:"TRACE"
+source_ip:10.0.*
+user_id:"usr-29"
+level:"WARN" AND message:file
+message:started
+source_ip:10.0.*
+level:"WARN"
+source_ip:10.0.*
+message:failed
+level:"WARN"
+source_ip:192.168.*
+level:"WARN"
+message:failed
+level:"WARN"
+user_id:"usr-622"
+level:"TRACE" AND message:input
+message:input
+message:started
+message:logged
+level:"INFO" AND message:input

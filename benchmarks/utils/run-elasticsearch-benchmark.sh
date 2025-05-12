@@ -21,10 +21,10 @@ ES_API_KEY="${ES_API_KEY:-}"    # Default to empty if ES_API_KEY is not set
 # Benchmark Parameters
 ES_INDEX_NAME="${ES_INDEX_NAME:-benchmark_logs}" # Default index name
 # Default data file relative to the benchmark tool directory
-DEFAULT_DATA_FILE="${BENCHMARK_TOOL_DIR}/scripts/generated_logs.ndjson"
+DEFAULT_DATA_FILE="${BENCHMARK_TOOL_DIR}/../scripts/generated_logs.ndjson"
 ES_DATA_FILE="${ES_DATA_FILE:-$DEFAULT_DATA_FILE}"
 # Default queries file relative to the benchmark tool directory
-DEFAULT_QUERIES_FILE="${BENCHMARK_TOOL_DIR}/scripts/generated_queries.txt"
+DEFAULT_QUERIES_FILE="${BENCHMARK_TOOL_DIR}/../scripts/generated_queries.txt"
 ES_QUERIES_FILE="${ES_QUERIES_FILE:-}" # Default to empty (no query benchmark)
 ES_BATCH_SIZE="${ES_BATCH_SIZE:-1000}" # Default batch size
 QUERY_ONLY_MODE="false" # Default to run ingestion + queries
