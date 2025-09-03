@@ -10,11 +10,11 @@ spec:
   security:
     config:
     tls:
-       http:
-         generate: true
-       transport:
-         generate: true
-         perNode: true
+      http:
+        generate: true
+      transport:
+        generate: true
+        perNode: true
   general:
     httpPort: 9200
     setVMMaxMapCount: true
@@ -32,40 +32,40 @@ spec:
     replicas: 1
     resources:
       requests:
-         memory: "512Mi"
-         cpu: "200m"
+        memory: "512Mi"
+        cpu: "200m"
       limits:
-         memory: "512Mi"
-         cpu: "200m"
+        memory: "512Mi"
+        cpu: "200m"
   nodePools:
-    # - component: cluster-managers
-    #   replicas: 3
-    #   jvm: -Xmx2G -Xms2G
-    #   resources:
-    #      requests:
-    #         memory: "4Gi"
-    #         cpu: "1"
-    #      limits:
-    #         memory: "4Gi"
-    #         cpu: "1"
-    #   roles:
-    #     - "cluster_manager"
-    #   persistence:
-    #      emptyDir: {}
-    - component: hot-nodes
-      replicas: 3
-      diskSize: "100Gi"
-      jvm: -Xmx2G -Xms2G
-      resources:
-         requests:
-            memory: "4Gi"
-            cpu: "1"
-         limits:
-            memory: "4Gi"
-            #cpu: "0"
-      # additionalConfig:
-      #   node.attr.temp: "hot"
-      roles:
-        - "data"
-        - "ingest"
-        - "cluster_manager"
+  # - component: cluster-managers
+  #   replicas: 3
+  #   jvm: -Xmx2G -Xms2G
+  #   resources:
+  #      requests:
+  #         memory: "4Gi"
+  #         cpu: "1"
+  #      limits:
+  #         memory: "4Gi"
+  #         cpu: "1"
+  #   roles:
+  #     - "cluster_manager"
+  #   persistence:
+  #      emptyDir: {}
+  - component: nodes
+    replicas: 3
+    diskSize: "50Gi"
+    jvm: -Xmx2G -Xms2G
+    resources:
+      requests:
+        memory: "8Gi"
+        cpu: "1"
+      limits:
+        memory: "8Gi"
+        #cpu: "0"
+        # additionalConfig:
+        #   node.attr.temp: "hot"
+    roles:
+    - "data"
+    - "ingest"
+    - "cluster_manager"

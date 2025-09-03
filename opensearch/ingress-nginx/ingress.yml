@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opensearch-dashboards
+  namespace: opensearch
+spec:
+  tls:
+  - hosts:
+    - dashboards.my.company
+  rules:
+  - host: dashboards.my.company
+    http:
+      paths:
+      - backend:
+          service:
+            name: my-cluster-dashboards
+            port:
+              number: 5601
+        path: "/(.*)"
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opensearch-hot-nodes
+  namespace: opensearch
+  annotations:
+    # kubernetes.io/ingress.class: nginx # Uncomment and set if you are using a specific ingress controller like nginx
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTP" # Change to "HTTPS" if your OpenSearch service expects HTTPS
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true" # Uncomment to enforce HTTPS redirection
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true" # If OpenSearch handles its own TLS and you want to pass encrypted traffic directly
+spec:
+  tls:
+  - hosts:
+    - opensearch-hot.my.company # Replace with your desired external hostname
+    secretName: opensearch-hot-tls # Replace with the name of your TLS secret for this host
+  rules:
+  - host: opensearch-hot.my.company # Replace with your desired external hostname
+    http:
+      paths:
+      - path: /
+        pathType: Prefix # Using Prefix for broad matching. Can be ImplementationSpecific if needed.
+        backend:
+          service:
+            name: opensearch-test-hot-nodes
+            port:
+              number: 9200
